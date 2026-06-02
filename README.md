@@ -5,4 +5,4 @@ Performs HDBSCAN iteratively to provide full data coverage. At each step it form
 It makes for a low compute power and reasonably fast procedure for extracting and structuring context from large data.
 
 
-### Lib is complete, but still writing and finalizing the docs before formally publishing. Git is available for use as is.
+*Lib is complete, but still writing and finalizing the docs before formally publishing. Git is available for use as is.*
