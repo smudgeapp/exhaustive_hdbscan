@@ -52,7 +52,7 @@ class LabelGeneratorConfig:
                                   'It must take ClusterFeatures as input and return a list of labels in the sequence cluster iteration, cluster label...')
 
 
-class MMR1(LabelGeneratorConfig):
+class MMR(LabelGeneratorConfig):
     """
     Maximal Marginal Relevance implementation subclassed to LabelGeneratorConfig. It filters the
     labels for relevance and diversity.

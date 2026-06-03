@@ -134,9 +134,7 @@ class EHDBSCAN:
         self.models = {}
         self.isfit = False
 
-    #build_tree = the main function that performs the clustering, applies the labels and assigns parent-child linkages
-
-   
+    
     def fit(self, X, y=None):
         """
         The fit method, performs the iterative clustering.
@@ -467,11 +465,10 @@ class EHDBSCAN:
         density = 1 / mutual_r_dist
         return np.median(density)
 
-    #annotate_box = convenience method to add annotation boxes on graphs
-
+    
     def _annotate_box(self, ax, text, cds, dim=200, fontsize=10, box_style="round,pad=0.3", box_color='aliceblue', box_border_color='black', box_border_width=1):
 
-        ann = ax.annotate(text, xy=cds, #xytext=offset,
+        ann = ax.annotate(text, xy=cds,
                            bbox=dict(boxstyle="round,pad=0.3", fc=box_color, ec=box_border_color, lw=box_border_width),
                            fontsize=fontsize,
                            ha='center', va='center',
