@@ -447,8 +447,8 @@ class EHDBSCAN:
         
         child_parent_mindist = np.amin(child_parent_codist, axis=1)
 
-        parent_core = full_dst[parent, :]
-        child_core = full_dst[child, :]
+        parent_core = full_dst[parent, parent]
+        child_core = full_dst[child, child]
 
         parent_core = np.sort(parent_core, axis=1)
         child_core = np.sort(child_core, axis=1)
