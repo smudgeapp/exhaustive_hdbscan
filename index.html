@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="description" content="None" />
+      <link rel="shortcut icon" href="img/favicon.ico" />
+    <title>Exhaustive HDBSCAN</title>
+    <link rel="stylesheet" href="css/theme.css" />
+    <link rel="stylesheet" href="css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Home";
+        var mkdocs_page_input_path = "index.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="." class="icon icon-home"> Exhaustive HDBSCAN
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="./search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">Home</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#basic-usage">Basic Usage</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#minimal-reducer-and-encoder-implementation">Minimal Reducer and Encoder Implementation</a>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="api/">API Reference</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="examples/">Examples</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href=".">Exhaustive HDBSCAN</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Home</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="welcome-to-exhaustive-hdbscan-docs">Welcome to Exhaustive HDBSCAN Docs</h1>
+<p>HDBSCAN is a density based clustering technique that results in stable clusters. It is a modification of the basic DBSCAN algorithm and the hierarchical element comes from the splitting technique that proceeds in order of the density metric, i.e. the splits are performed as the density thresholds are reached sequentially. Consequently points within a threshold that do not qualify the cluster size criteria, are qualified as noise.</p>
+<p>Since outputs of HDBSCAN clustering leaves out some points as noise, this can lead to loss of information. Exhaustive HDBSCAN addresses this shortfall by iteratively clustering the left over noise points at each level of iteration. The points left out as noise at each iteration are combined into their own density structure and clustered through their unique thresholding. </p>
+<p>Typically, HDBSCAN is combined with a dimension reduction technique. Universal Manifold Approximation and Projection (UMAP) is more suited to the HDBSCAN as it preserves local neighborhood topology. This preserves the density structure while solidifying the separation boundaries. </p>
+<p>With Exhaustive HDBSCAN, a new reduction is performed at each iteration. This leads to noise points forming their own unique density structure within which thresholding can separate clusters. Cluster size and minimum samples are adjusted iteratively to account for the reduced dataset size as iterations proceed.</p>
+<p>Further when noise points from each iteration are reduced to form their unique density structure, these clusters can now be linked back to the clusters they originally fell out of. Exhaustive HDBSCAN caters for this by using a HDBSCAN-like density-based metric to assign parent-child links between clusters from previous iteration and current iteration. The resultant output is a tree of clusters.</p>
+<p>Tests have found that as we move down this tree of clusters, the clusters become more sparse, but the meaning within them soldifies and becomes more precise.</p>
+<p>Exhaustive HDBSCAN becomes an effective tool to extract structured meaning from large datasets in an unsupervised manner.</p>
+<p><a href="https://hdbscan.readthedocs.io/en/latest/how_hdbscan_works.html">Read more about HDBSCAN</a></p>
+<p><a href="https://umap-learn.readthedocs.io/en/latest/clustering.html">Read more about UMAP</a></p>
+<p><a href="https://github.com/smudgeapp/exhaustive_hdbscan">See full source of Exhaustive HDBSCAN</a></p>
+<h2 id="installation">Installation</h2>
+<pre><code>pip install exhaustive_hdbscan
+</code></pre>
+<h2 id="basic-usage">Basic Usage</h2>
+<p>Here <em>input_data</em> is raw feature set.</p>
+<pre><code>from exhaustive_hdbscan import EHDBSCAN
+
+ehdb = EHDBSCAN()
+ehdb = ehdb.fit(input_data)
+
+print(ehdb.cluster_feats.parent_names)
+</code></pre>
+<h2 id="minimal-reducer-and-encoder-implementation">Minimal Reducer and Encoder Implementation</h2>
+<pre><code>from sentence_transformers import SentenceTransformer
+import umap
+from exhaustive_hdbscan import Reducer, Encoder
+
+class mEncoder(Encoder):
+    def __init__(self):
+        self.encoder = SentenceTransformer('all-mpnet-base-v2')
+
+    def encode(self, X):
+        embed = self.encoder.encode(X)
+        embed = normalize(embed)
+        return embed
+
+class mReducer(Reducer):
+    def __init__(self):
+        super().__init__()
+        self.ump = umap.UMAP(metric='cosine', random_state=200585)
+
+    def fit(self, X):
+        super().__init__()
+        self.ump.fit(X)
+        return self.ump.embedding_
+
+    def transform(self, X):
+        super().__init__()
+        return self.ump.transform(X)
+</code></pre>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="api/" class="btn btn-neutral float-right" title="API Reference">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+    
+      <span><a href="api/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = ".";</script>
+    <script src="js/theme_extra.js"></script>
+    <script src="js/theme.js"></script>
+      <script src="search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
+
+<!--
+MkDocs version : 1.6.1
+Build Date UTC : 2026-06-22 23:04:56.612104+00:00
+-->
