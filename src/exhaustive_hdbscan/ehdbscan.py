@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import matplotlib
 import matplotlib.pyplot as plt
 from sklearn.neighbors import NearestNeighbors
 from sklearn.cluster import HDBSCAN
@@ -8,9 +9,9 @@ from typing import List, Optional
 from typing import Any
 import logging
 from copy import deepcopy
-from utilities import validate_input, validate_metric, Encoder, Reducer
-from clusterfeatures import ClusterFeatures
-from labelgenerator import LabelGeneratorConfig
+from .utilities import validate_input, validate_metric, validate_tree_metric, Encoder, Reducer
+from .clusterfeatures import ClusterFeatures
+from .labelgenerator import LabelGeneratorConfig
 
 try:
     if logger:
@@ -58,61 +59,79 @@ class EHDBSCAN:
         ----------
 
         metric : str
-        The metric to be used by HDBSCAN. It must be one acceptable by sci-kit pairwise_distances method.
+            The metric to be used by HDBSCAN. It must be one acceptable by sci-kit pairwise_distances method.
 
-        If precomputed is passed, the fit method will accept a square matrix of pairwise distances.
+            If precomputed is passed, the fit method will accept a square matrix of pairwise distances.
 
         tree_metric : str
-        The metric to be used for forming parent-child links at each clustering step.
+            The metric to be used for forming parent-child links at each clustering step.
 
-        It must be one acceptable by pairwise_distances method.
+            It must be one acceptable by pairwise_distances method.
 
-        If precomputed, this will not apply.
+            If precomputed, this will not apply.
 
         min_clustersize_multiplier : float
-        The mutliplier applied to the full length of the input at each clustering step.
+            The mutliplier applied to the full length of the input at each clustering step.
 
         max_clustersize_multiplier : float
-        The multiplier applied to the minimum cluster size at each clustering step.
+            The multiplier applied to the minimum cluster size at each clustering step.
 
         min_samples : int
-        The starting number of minimum samples to be considered by HDBSCAN as neighbors.
+            The starting number of minimum samples to be considered by HDBSCAN as neighbors.
 
-        This will automatically be reduced by 1 to a minimum of 2 through each clustering step.
+            This will automatically be reduced by 1 to a minimum of 2 through each clustering step.
 
         n_jobs : int
-        Number of threads. Application is same as sci-kit.
+            Number of threads. Application is same as sci-kit.
 
         log_level : int
-        Set the logging level. Same values apply as default Python logging, DEBUG, INFO, WARNING, ERROR
+            Set the logging level. Same values apply as default Python logging, DEBUG, INFO, WARNING, ERROR
 
         cluster_core_k : int
-        This identifies nearest neighbors to be considered for forming parent-child links.
+            This identifies nearest neighbors to be considered for forming parent-child links.
 
-        The core distance between clusters.
+            The core distance between clusters.
 
         reducer : Reducer
-        The dimension reduction object. The Reducer must be subclassed with desired reduction method.
+            The dimension reduction object. The Reducer must be subclassed with desired reduction method.
 
-        See examples for implementation.
+            See examples for implementation.
 
-        While dimension reduction is not required for HDBSCAN, it is highly recommended. Typically,
-        UMAP is very effective with HDBSCAN. But UMAP implementations may introduce non-determinism.
-        
+            While dimension reduction is not required for HDBSCAN, it is highly recommended. Typically,
+            UMAP is very effective with HDBSCAN. But UMAP implementations may introduce non-determinism.
+            
         encoder : Encoder
-        The text embedder object. The Encoder must be subclassed with desired encoding method/model.
+            The text embedder object. The Encoder must be subclassed with desired encoding method/model.
 
-        If no encoder is used, text embeddings or pairwise distances must be provided.
+            If no encoder is used, text embeddings or pairwise distances must be provided.
 
-        See examples for implementation.
+            See examples for implementation.
 
         Returns
         -------
 
         self : object
-        Returns self.
-
+            Returns self.
+            
+        Attributes
+        ----------
         
+        cluster_feats : ClusterFeatures
+            An instance of ClusterFeatures. Only callable after fit is called.
+            
+        reducer : Reducer
+            The instance of Reducer passed to the EHDBSCAN object.
+            
+        encoder : Encoder
+            The instance of Encoder passed to the EHDBSCAN object.
+            
+        models : dict
+            Dictionary object of HDBSCAN models at each iteration. 
+            
+            If a reducer is used, it will also store the instance of Reducer after each fit is called.
+            In this case, use key "hdb" for HDBSCAN model and "reducer" for the Reducer instance.
+            
+                
         """
         self.metric = validate_metric(metric)
         self.tree_metric = validate_tree_metric(tree_metric)
@@ -123,11 +142,6 @@ class EHDBSCAN:
         self.n_jobs = n_jobs
         logger.setLevel(log_level)
         streamer.setLevel(log_level)
-        self.data = pd.DataFrame()
-        self.parent_labels = 0
-        self.child_labels = 0
-        self.parent_names = []
-        self.child_names = []
         self.cluster_core_k = cluster_core_k
         self.reducer = reducer
         self.encoder = encoder
@@ -143,16 +157,16 @@ class EHDBSCAN:
         ----------
 
         X : {array-like} of shape (n_samples, n_features) or ndarray of shape (n_samples, n_samples)
-        A feature array of text, embeddings or pairwise distances.
+            A feature array of text, embeddings or pairwise distances.
 
         y : None
-        Ignored
+            Ignored
 
         Returns
         -------
 
         self : object
-        Returns self.
+            Returns self.
         
         """
         
@@ -169,7 +183,7 @@ class EHDBSCAN:
             if is_embedding == False:
                 self.cluster_feats._add_input(X)
                 if self.encoder == None:
-                    raise ValueError('Expects Encoder to be specified when text is input. OR directly input embeddings.')
+                    raise ValueError('Expects Encoder to be specified when text is input. OR directly input embeddings or numeric features.')
                 X_recur = self.encoder.encode(X_recur)
                 self.cluster_feats._add_embeddings(X_recur)
                 
@@ -196,6 +210,8 @@ class EHDBSCAN:
         
         while recur:
             model = {'hdb': None, 'reducer': None}
+
+            X_hdb = X_recur
             
             if self.reducer:
                 redr = self.reducer.fit(X_recur)
@@ -208,6 +224,7 @@ class EHDBSCAN:
                 self.cluster_feats._add_reduce_embeddings(redr_fill)
                 model['reducer'] = deepcopy(self.reducer)
 
+            
             hdb = HDBSCAN(metric=self.metric,
                                 min_cluster_size=min_size,
                                 min_samples=min(min_samps, min_size // 2),
@@ -308,12 +325,12 @@ class EHDBSCAN:
         Parameters
         ----------
         X : {array-like} of shape (n_samples, n_features)
-        An array of text or embeddings.
+            An array of text or embeddings.
 
         Returns
         -------
         ClusterFeatures : object
-        An instance of ClusterFeatures for the prediction X.
+            An instance of ClusterFeatures for the prediction X.
         
         """
         
@@ -445,8 +462,10 @@ class EHDBSCAN:
         
         child_parent_mindist = np.amin(child_parent_codist, axis=1)
 
-        parent_core = full_dst[parent, parent]
-        child_core = full_dst[child, child]
+        parent_core = full_dst[parent, :]
+        parent_core = parent_core[:, parent]
+        child_core = full_dst[child, :]
+        child_core = child_core[:, child]
 
         parent_core = np.sort(parent_core, axis=1)
         child_core = np.sort(child_core, axis=1)
@@ -501,52 +520,52 @@ class EHDBSCAN:
         Parameters
         ----------
         cluster_features : ClusterFeatures
-        If ClusterFeatures are provided, it will plot the tree of the input. If
-        not provided, it will plot the tree of the cluster features from the fit.
+            If ClusterFeatures are provided, it will plot the tree of the input. If
+            not provided, it will plot the tree of the cluster features from the fit.
 
         labeler : LabelGeneratorConfig
-        If labeler is provided, they will be displayed on the tree nodes.
+            If labeler is provided, they will be displayed on the tree nodes.
 
-        Labeler must be a subclass of LabelGeneratorConfig.
+            Labeler must be a subclass of LabelGeneratorConfig.
 
-        See examples for implementation
+            See examples for implementation
 
         figsize : tuple
-        A tuple setting the figure size. Same as matplotlib figsize.
+            A tuple setting the figure size. Same as matplotlib figsize.
 
         horizontal_spacing : int
-        Set the horizontal spacing between tree nodes.
+            Set the horizontal spacing between tree nodes.
 
         vertical_spacing : int
-        Set the vertical spacing between tree levels.
+            Set the vertical spacing between tree levels.
 
         ax : matplotlib.axes.Axes
-        Set the axis object on which to draw the tree.
+            Set the axis object on which to draw the tree.
 
         label_font_size : int
-        Font size for node labels.
+            Font size for node labels.
 
         label_box_dim : int
-        Box size for node boxes.
+            Box size for node boxes.
 
         label_box_style : str
-        Box style for label boxes. Matplotlib compatible.
+            Box style for label boxes. Matplotlib compatible.
 
         label_box_color : str
-        Box inner color. Matplotlib compatible.
+            Box inner color. Matplotlib compatible.
 
         label_box_border_color : str
-        Box border line color. Matplotlib compatible.
+            Box border line color. Matplotlib compatible.
 
         label_box_border_width : int
-        Box border line width.
+            Box border line width.
 
         
 
         Returns
         -------
         matplotlib.figure.Figure, matplotlib.axes.Axes
-        The instance of figure and axis on which the tree is drawn.
+            The instance of figure and axis on which the tree is drawn.
 
         
         """

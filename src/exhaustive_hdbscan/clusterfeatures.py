@@ -28,10 +28,10 @@ class ClusterFeatures:
     Attributes
     ----------
     parent_names : list
-    List of all parent names in the order their labels and embeddings are stored.
+        List of all parent names in the order their labels and embeddings are stored.
 
     child_names : list
-    List of all children names in the order their labels and embeddings are stored.
+        List of all children names in the order their labels and embeddings are stored.
     
     """
 
@@ -105,23 +105,23 @@ class ClusterFeatures:
         Parameters
         ----------
         name : str
-        Name of parent from parent_names.
+            Name of parent from parent_names.
 
         label : int
-        Label from the parent where name must be specified.
+            Label from the parent where name must be specified.
 
-        If label is specified without name, this method will throw an error.
+            If label is specified without name, this method will throw an error.
 
         get_ids : {array-like} of shape (n_samples,)
-        Give specific index IDs to be extracted from the parent labels.
+            Give specific index IDs to be extracted from the parent labels.
 
-        If no name or label is specified, it will return the IDs for all parent
-        clusters.
+            If no name or label is specified, it will return the IDs for all parent
+            clusters.
 
         Returns
         -------
         ndarray, ndarray
-        Returns an array of the labels and their respective IDs
+            Returns an array of the labels and their respective IDs
         
         """
         parent_out = self.parent_labels
@@ -159,23 +159,23 @@ class ClusterFeatures:
         Parameters
         ----------
         name : str
-        Name of child from child_names.
+            Name of child from child_names.
 
         label : int
-        Label from the child where name must be specified.
+            Label from the child where name must be specified.
 
-        If label is specified without name, this method will throw an error.
+            If label is specified without name, this method will throw an error.
 
         get_ids : {array-like} of shape (n_samples,)
-        Give specific index IDs to be extracted from the child labels.
+            Give specific index IDs to be extracted from the child labels.
 
-        If no name or label is specified, it will return the IDs for all child
-        clusters.
+            If no name or label is specified, it will return the IDs for all child
+            clusters.
 
         Returns
         -------
         ndarray, ndarray
-        Returns an array of the labels and their respective IDs
+            Returns an array of the labels and their respective IDs
         
         """
         child_out = self.child_labels
@@ -213,22 +213,22 @@ class ClusterFeatures:
         Parameters
         ----------
         name : str
-        Name of parent or child from parent_names or child_names.
+            Name of parent or child from parent_names or child_names.
 
         label : int
-        Label from the parent or child where name must be specified.
+            Label from the parent or child where name must be specified.
 
-        If label is specified without name, this method will throw an error.
+            If label is specified without name, this method will throw an error.
 
         get_ids : {array-like} of shape (n_samples,)
-        Give specific index IDs to be extracted from the input.
+            Give specific index IDs to be extracted from the input.
 
-        If no name or label is specified, it will return the IDs for all clusters.
+            If no name or label is specified, it will return the IDs for all clusters.
 
         Returns
         -------
         ndarray, ndarray
-        Returns an array of the input text and their respective IDs
+            Returns an array of the input text and their respective IDs
         
         """
         in_out = self.input
@@ -282,37 +282,37 @@ class ClusterFeatures:
         Parameters
         ----------
         name : str
-        Name of parent or child from parent_names or child_names.
+            Name of parent or child from parent_names or child_names.
 
         label : int
-        Label from the parent or child where name must be specified.
+            Label from the parent or child where name must be specified.
 
-        If label is specified without name, this method will throw an error.
+            If label is specified without name, this method will throw an error.
 
         get_ids : {array-like} of shape (n_samples,)
-        Give specific index IDs to be extracted from the input.
+            Give specific index IDs to be extracted from the input.
 
-        If no name or label is specified, it will return the IDs for all clusters.
+            If no name or label is specified, it will return the IDs for all clusters.
 
         row_ids : {array-like} of shape (n_samples,)
-        Specify the row_ids to be extracted from the square matrix of pairwise
-        distances.
+            Specify the row_ids to be extracted from the square matrix of pairwise
+            distances.
 
-        This will override name, label and ID specification.
+            This will override name, label and ID specification.
 
         col_ids : {array-like} of shape (n_samples,)
-        Specify the col_ids to extracted from the square matrix of pairwise
-        distances.
+            Specify the col_ids to extracted from the square matrix of pairwise
+            distances.
 
-        This will override name, label and ID specification, but not row_ids.
+            This will override name, label and ID specification, but not row_ids.
 
-        If row_ids are specified, the specified columns will be extracted only
-        for those rows.
+            If row_ids are specified, the specified columns will be extracted only
+            for those rows.
 
         Returns
         -------
         ndarray, ndarray
-        Returns an array of the input text and their respective IDs
+            Returns an array of the input text and their respective IDs
         
         """
         dst_out = self.distances
@@ -390,22 +390,22 @@ class ClusterFeatures:
         Parameters
         ----------
         name : str
-        Name of parent or child from parent_names or child_names.
+            Name of parent or child from parent_names or child_names.
 
         label : int
-        Label from the parent or child where name must be specified.
+            Label from the parent or child where name must be specified.
 
-        If label is specified without name, this method will throw an error.
+            If label is specified without name, this method will throw an error.
 
         get_ids : {array-like} of shape (n_samples,)
-        Give specific index IDs to be extracted from the input.
+            Give specific index IDs to be extracted from the input.
 
-        If no name or label is specified, it will return the IDs for all clusters.
+            If no name or label is specified, it will return the IDs for all clusters.
 
         Returns
         -------
         ndarray, ndarray
-        Returns an array of the text embeddings and their respective IDs
+            Returns an array of the text embeddings and their respective IDs
         
         """
         embed_out = self.embeddings
@@ -457,22 +457,22 @@ class ClusterFeatures:
         Parameters
         ----------
         name : str
-        Name of parent or child from parent_names or child_names.
+            Name of parent or child from parent_names or child_names.
 
         label : int
-        Label from the parent or child where name must be specified.
+            Label from the parent or child where name must be specified.
 
-        If label is specified without name, this method will throw an error.
+            If label is specified without name, this method will throw an error.
 
         get_ids : {array-like} of shape (n_samples,)
-        Give specific index IDs to be extracted from the input.
+            Give specific index IDs to be extracted from the input.
 
-        If no name or label is specified, it will return the IDs for all clusters.
+            If no name or label is specified, it will return the IDs for all clusters.
 
         Returns
         -------
         ndarray, ndarray
-        Returns an array of the dimension reduction embeddings and their respective IDs
+            Returns an array of the dimension reduction embeddings and their respective IDs
         
         """
         embed_out = self.reduce_embeddings
@@ -532,6 +532,6 @@ class ClusterFeatures:
         Returns
         -------
         DataFrame
-        A Pandas dataframe object.
+            A Pandas dataframe object.
         """
         return self.pandas_data

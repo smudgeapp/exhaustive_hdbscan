@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "exhaustive_hdbscan"
+version = "0.0.2"
+authors = [
+  { name="Ali Yaqub", email="smudgeapp@gmail.com" },
+]
+description = "Iterative clustering mechanism providing full coverage of the data."
+readme = "README.md"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+requires-python = ">=3.9"
+dependencies = [
+	"scikit_learn>=1.8.0",
+	"numpy>=2.4.4",
+	"pandas>=3.0.2",
+	"matplotlib>=3.9.4",
+	"scipy>=1.17.1"
+]
+license = "MIT"
+license-files = ["LICEN[CS]E*"]
+
+[project.urls]
+Homepage = "https://github.com/smudgeapp/exhaustive_hdbscan"
+
+[tool.setuptools.packages.find]
+where = ["src"]

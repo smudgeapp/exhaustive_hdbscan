@@ -1,2 +1,4 @@
 docs
 mkdocs.yml
+src/exhaustive_hdbscan.egg-info
+dist

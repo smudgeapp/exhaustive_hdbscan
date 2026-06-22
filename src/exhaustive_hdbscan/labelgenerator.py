@@ -4,8 +4,8 @@ from sklearn.preprocessing import normalize
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics import pairwise_distances
 import scipy.sparse as sp
-from clusterfeatures import ClusterFeatures
-from utilities import validate_input, Encoder, Reducer
+from .clusterfeatures import ClusterFeatures
+from .utilities import validate_input, Encoder, Reducer
 from typing import List, Optional
 from typing import Any
 
@@ -38,13 +38,13 @@ class LabelGeneratorConfig:
         Parameters
         ----------
         cluster_features : ClusterFeatures
-        Instance of ClusterFeatures. This is must for compatibility with EHDBSCAN.
+            Instance of ClusterFeatures. This is must for compatibility with EHDBSCAN.
 
         Returns
         -------
         output : list
-        Returns a single level list of generated labels for cluster visualization or other
-        downstream tasks. Labels must be in the sequence of the clustering procedure.
+            Returns a single level list of generated labels for cluster visualization or other
+            downstream tasks. Labels must be in the sequence of the clustering procedure.
         """
         
 
@@ -64,31 +64,31 @@ class MMR(LabelGeneratorConfig):
     Parameters
     ----------
     lda : float
-    lambda value for MMR. Ranges from 0 to 1.
+        lambda value for MMR. Ranges from 0 to 1.
 
-    0 = Only diversity; 1 = Only relevance.
+        0 = Only diversity; 1 = Only relevance.
 
     encoder : Encoder {Optional}
-    Expects a subclass of Encoder.
+        Expects a subclass of Encoder.
 
-    If no encoder is passed, it expects embeddings as input. In this case,
-    labels are index of the passed embeddings.
+        If no encoder is passed, it expects embeddings as input. In this case,
+        labels are index of the passed embeddings.
 
     metric : str
-    Metric to be used for similarity. Expects metric acceptable by sci-kit
-    DistanceMetric.
+        Metric to be used for similarity. Expects metric acceptable by sci-kit
+        DistanceMetric.
 
     top_n : int
-    Top N similarity labels to be output.
+        Top N similarity labels to be output.
 
 
     Attributes
     ----------
     label_sim : {array-like} of shape (n_samples, n_samples)
-    Pairwise similarity matrix of input.
+        Pairwise similarity matrix of input.
 
     label_embed : {array-like} of shape (n_samples, n_features)
-    Label embeddings. Only available if Encoder is passed.
+        Label embeddings. Only available if Encoder is passed.
 
     
     """
@@ -111,7 +111,7 @@ class MMR(LabelGeneratorConfig):
         numeric embeddings.
 
         X : {array-like} of shape (n_samples,) for text OR (n_samples, n_features) for embeddings
-        Expects text or numeric embeddings. If text is provided, an Encoder must also be specified.
+            Expects text or numeric embeddings. If text is provided, an Encoder must also be specified.
 
         """
         X, is_embedding = validate_input(X)
@@ -135,7 +135,7 @@ class MMR(LabelGeneratorConfig):
         Get the MMR labels.
 
         y : {array-like} of shape (n_samples,) for text OR (n_samples, n_features) for embeddings
-        Expects text or numeric embeddings. If text is provided, an Encoder must also be specified.
+            Expects text or numeric embeddings. If text is provided, an Encoder must also be specified.
         
         """
         label_idx = []
@@ -218,13 +218,13 @@ class MMR(LabelGeneratorConfig):
         Parameters
         ----------
         cluster_feats : ClusterFeatures
-        An instance of ClusterFeatures.
+            An instance of ClusterFeatures.
 
         Returns
         -------
         MMR Ranked Labels : list
-        A single level list of MMR ranked labels for each cluster in sequence
-        iteration > cluster.
+            A single level list of MMR ranked labels for each cluster in sequence
+            iteration > cluster.
         
         """
 
@@ -267,44 +267,44 @@ class ClassTfidf(LabelGeneratorConfig):
     Parameters
     ----------
     top_n : int
-    Top N labels to output.
+        Top N labels to output.
 
     min_df : float
-    Minimum frequency threshold to include terms. Same as sci-kit.
+        Minimum frequency threshold to include terms. Same as sci-kit.
 
     max_df : float
-    Maximum frequency threshold to include terms. Same as sci-kit.
+        Maximum frequency threshold to include terms. Same as sci-kit.
 
     ngram_range : tuple
-    Range of ngrams to include. Same as sci-kit.
+        Range of ngrams to include. Same as sci-kit.
 
     stop_words : str, list
-    List of words to exclude. Same as sci-kit.
+        List of words to exclude. Same as sci-kit.
 
     token_pattern: str
-    Regex pattern for including words. Same as sci-kit.
+        Regex pattern for including words. Same as sci-kit.
 
     lowercase : bool
-    Converts input to lowercase. Same as sci-kit.
+        Converts input to lowercase. Same as sci-kit.
 
     max_features : int
-    Max length of features to retain. Same as sci-kit.
+        Max length of features to retain. Same as sci-kit.
 
     mmr : MMR
-    An instance of MMR.
+        An instance of MMR.
 
-    This will apply on the class labels after the ClassTfidf procedure has run.
+        This will apply on the class labels after the ClassTfidf procedure has run.
 
-    This will only work with the compute method. Simple fit and transform will
-    not execute an MMR ranking.
+        This will only work with the compute method. Simple fit and transform will
+        not execute an MMR ranking.
 
     Attributes
     ----------
     cW : scipy sparse matrix of shape (n_samples, n_features)
-    The class weights generated after the fit method is called.
+        The class weights generated after the fit method is called.
 
     self.features : {array-like} of shape (n_features,)
-    The vectorized vocabulary. Only callable after fit method is called.
+        The vectorized vocabulary. Only callable after fit method is called.
 
     
     """
@@ -368,12 +368,12 @@ class ClassTfidf(LabelGeneratorConfig):
         Parameters
         ----------
         X : {array-like} of shape (n_samples,)
-        Only text input accepted.
+            Only text input accepted.
 
         Returns
         ----------
         TF-IDF {array-like} of shape (n_samples, n_features)
-        The array matrix of Class TF-IDF normalized scores of each document.
+            The array matrix of Class TF-IDF normalized scores of each document.
         
         """
         X, _ = validate_input(X, classtfidf=True)
@@ -408,7 +408,7 @@ class ClassTfidf(LabelGeneratorConfig):
         Parameters
         ----------
         y : {array-like} of shape (n_samples,)
-        Input text array for transforming along the current Class TF-IDF structure.
+            Input text array for transforming along the current Class TF-IDF structure.
 
         Returns
         -------
@@ -436,13 +436,13 @@ class ClassTfidf(LabelGeneratorConfig):
         Parameters
         ----------
         cluster_feats : ClusterFeatures
-        An instance of ClusterFeatures.
+            An instance of ClusterFeatures.
 
         Returns
         -------
         Class Labels : list
-        A single level list of top_n class labels for each cluster of each iteration in sequence
-        iteration > cluster. 
+            A single level list of top_n class labels for each cluster of each iteration in sequence
+            iteration > cluster. 
         """
         class_texts = self._preprocess(cluter_feats)
         texts = [x['text'] for x in class_texts]

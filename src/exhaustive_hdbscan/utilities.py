@@ -11,8 +11,6 @@ def validate_input(X, classtfidf=False):
         X = np.array(X)
     elif hasattr(X, 'values'):
         X = X.values
-        if X.ndim > 1:
-            raise ValueError('Only Pandas Series accepted. Please pass in only the relevant column of the dataframe.')                
         X = np.array(X)
     elif isinstance(X, np.ndarray):
         pass
@@ -31,14 +29,14 @@ def validate_input(X, classtfidf=False):
 
 
 def validate_metric(metric):
-    metrics = ['euclidean', 'manhattan', 'cosine', 'haversine', 'precomputed']
+    metrics = ['euclidean', 'manhattan', 'cosine', 'haversine', 'cityblock', 'l1', 'l2', 'precomputed']
     if metric not in metrics:
         raise ValueError(f'Metric must be one of {metrics}. For precomputed, you must provide a square matrix of pairwise distances.')
 
     return metric
 
 def validate_tree_metric(metric):
-    metrics = ['cityblock', 'cosine', 'euclidean', 'l1', 'l2', 'manhattan', 'nan_euclidean']
+    metrics = ['euclidean', 'manhattan', 'cosine', 'haversine', 'cityblock', 'l1', 'l2']
     if metric not in metrics:
         raise ValueError(f'Metric must me one of {metrics}.')
     
@@ -60,12 +58,12 @@ class Encoder():
         Parameters
         ----------
         X : {array-like} of shape (n_samples,)
-        Text input acceptable by EHDBSCAN.
+            Text input acceptable by EHDBSCAN.
 
         Returns
         -------
         {array-like} of shape (n_samples, n_features)
-        Must output array of embeddings of specified shape.
+            Must output array of embeddings of specified shape.
         """
         
         raise NotImplementedError('Subclass must implement the encode method and return an array-like of shape (n_samples, n_features).')
@@ -85,14 +83,14 @@ class Reducer():
         Parameters
         ----------
         X : {array-like} of shape (n_samples, n_features)
-        Fit the input embeddings on the reduction method.
+            Fit the input embeddings on the reduction method.
 
-        Expects encoded embeddings input with numeric dtype.
+            Expects encoded embeddings input with numeric dtype.
 
         Returns
         -------
         self : object
-        Expects return self object, but not required.
+            Expects return self object, but not required.
         
         """
         
@@ -109,17 +107,17 @@ class Reducer():
         Parameters
         ---------
         X : {array-like} of shape (n_samples, n_features)
-        Transform the encoded embeddings with the fitted reduction method.
+            Transform the encoded embeddings with the fitted reduction method.
 
-        Expects encoded embeddings input with numeric dtype.
+            Expects encoded embeddings input with numeric dtype.
 
         Returns
         -------
         {array-like} of shape (n_samples, n_reduced_features)
-        Method must return an array-like object that will be used for clustering.
+            Method must return an array-like object that will be used for clustering.
 
-        These embeddings will be stored in ClusterFeatures for approx_predict of
-        EHDBSCAN.
+            These embeddings will be stored in ClusterFeatures for approx_predict of
+            EHDBSCAN.
         
         """
         

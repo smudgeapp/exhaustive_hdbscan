@@ -1,5 +1,5 @@
-from utilities import validate_metric, validate_input
-from clusterfeatures import ClusterFeatures
+from .utilities import validate_metric, validate_input
+from .clusterfeatures import ClusterFeatures
 import numpy as np
 import pandas as pd
 from sklearn.metrics import pairwise_distances
@@ -16,23 +16,23 @@ class ClusterVectorOps:
     Parameters
     ----------
     cluster_features : ClusterFeatures
-    Input instance of ClusterFeatures that has been fit.
+        Input instance of ClusterFeatures that has been fit.
 
     metric : str
-    The global metric for all operations. Metric may also be defined for individual operations.
+        The global metric for all operations. Metric may also be defined for individual operations.
 
-    Metric is expected to be the same expected by sci-kit DitanceMetric
+        Metric is expected to be the same expected by sci-kit DitanceMetric
 
     use_embedding : bool
-    Whether to use the input text embeddings stored in the ClusterFeatures. Otherwise it
-    will use the pairwise distances stored in the ClusterFeatures.
+        Whether to use the input text embeddings stored in the ClusterFeatures. Otherwise it
+        will use the pairwise distances stored in the ClusterFeatures.
 
-    Generally, using embeddings is expected to yield better results.
+        Generally, using embeddings is expected to yield better results.
 
     Returns
     -------
     self : object
-    Returns self.
+        Returns self.
     
     """
     def __init__(self,
@@ -54,23 +54,23 @@ class ClusterVectorOps:
         Parameters
         ----------
         top_n : int
-        Top N neighbors to return
+            Top N neighbors to return
 
         name : str
-        Parent or child name as stored in the ClusterFeatures instance.
+            Parent or child name as stored in the ClusterFeatures instance.
 
         label : int
-        Parent or child label from the available labels in the ClusterFeatures instance.
+            Parent or child label from the available labels in the ClusterFeatures instance.
 
         metric : str
-        The metric to be used for centroid neighbors. It will override the global metric specification.
+            The metric to be used for centroid neighbors. It will override the global metric specification.
 
-        Expects the same input as accepted by sci-kit DistanceMetric.
+            Expects the same input as accepted by sci-kit DistanceMetric.
 
         Returns
         -------
         IDs of centroid neighbors {array-like} of shape (n_samples,)
-        These IDs are aligned with the input to the EHDBSCAN and stored in the ClusterFeatures instance.
+            These IDs are aligned with the input to the EHDBSCAN and stored in the ClusterFeatures instance.
         """
         use_metric = self.metric
         if metric:
@@ -128,23 +128,23 @@ class ClusterVectorOps:
         Parameters
         ----------
         parent : tuple
-        A tuple of parent name and one of its cluster label e.g. ('parent_0', 2)
+            A tuple of parent name and one of its cluster label e.g. ('parent_0', 2)
 
         child : tuple
-        A tuple of child name and one of its cluster label e.g. ('child_0', 3)
+            A tuple of child name and one of its cluster label e.g. ('child_0', 3)
 
         top_n : int
-        Top N IDs of differences and commonalities to return.
+            Top N IDs of differences and commonalities to return.
 
         metric : str
-        The metric to be used for distance estimations. It will override the global metric.
+            The metric to be used for distance estimations. It will override the global metric.
 
-        Expects the same input as accepted by sci-kit DistanceMetric.
+            Expects the same input as accepted by sci-kit DistanceMetric.
 
         Returns
         -------
         IDs for Parent Difference, Child Difference, Parent-Child Commmon {array-like} of shape (n_samples,)
-        IDs are returned in the sequence of the input stored in the ClusterFeats instance.
+            IDs are returned in the sequence of the input stored in the ClusterFeats instance.
         
         """
         use_metric = self.metric
