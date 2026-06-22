@@ -14,6 +14,8 @@ Tests have found that as we move down this tree of clusters, the clusters become
 
 Exhaustive HDBSCAN becomes an effective tool to extract structured meaning from large datasets in an unsupervised manner.
 
+[Full Docs](https://smudgeapp.github.io/exhaustive_hdbscan/)
+
 ## Installation
 
 	pip install exhaustive_hdbscan
