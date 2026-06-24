@@ -1735,7 +1735,15 @@ not provided, it will plot the tree of the cluster features from the fit.</p>
 <span class="normal">653</span>
 <span class="normal">654</span>
 <span class="normal">655</span>
-<span class="normal">656</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">plot_tree</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+<span class="normal">656</span>
+<span class="normal">657</span>
+<span class="normal">658</span>
+<span class="normal">659</span>
+<span class="normal">660</span>
+<span class="normal">661</span>
+<span class="normal">662</span>
+<span class="normal">663</span>
+<span class="normal">664</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">plot_tree</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
               <span class="n">cluster_features</span><span class="p">:</span> <span class="n">ClusterFeatures</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
               <span class="n">labeler</span><span class="p">:</span> <span class="n">LabelGeneratorConfig</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
              <span class="n">figsize</span><span class="p">:</span> <span class="nb">tuple</span> <span class="o">=</span> <span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span>
@@ -1869,23 +1877,31 @@ not provided, it will plot the tree of the cluster features from the fit.</p>
         <span class="n">hori_spacing</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="n">ann_x</span> <span class="o">=</span> <span class="mi">0</span>
 
-    <span class="k">for</span> <span class="n">parent</span> <span class="ow">in</span> <span class="n">parent_boxes</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-        <span class="k">if</span> <span class="n">parent</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">parent_boxes</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">box_locs</span> <span class="o">=</span> <span class="n">parent_boxes</span><span class="p">[</span><span class="n">parent</span><span class="p">]</span>
-            <span class="n">parent_labels</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">cluster_feats</span><span class="o">.</span><span class="n">get_parent</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;parent_</span><span class="si">{</span><span class="n">parent</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-            <span class="n">child_labels</span><span class="p">,</span> <span class="n">child_pts</span> <span class="o">=</span> <span class="n">cluster_feats</span><span class="o">.</span><span class="n">get_child</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;child_</span><span class="si">{</span><span class="n">parent</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parent_boxes</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">box_locs</span> <span class="o">=</span> <span class="n">parent_boxes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">box_locs</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">loc</span> <span class="o">=</span> <span class="n">box_locs</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="s1">&#39;points&#39;</span><span class="p">]</span>
+        <span class="n">xlim</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">loc</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">axs</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">axs</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="o">-</span><span class="n">xlim</span><span class="p">,</span> <span class="n">xlim</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">parent</span> <span class="ow">in</span> <span class="n">parent_boxes</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">parent</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">parent_boxes</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">box_locs</span> <span class="o">=</span> <span class="n">parent_boxes</span><span class="p">[</span><span class="n">parent</span><span class="p">]</span>
+                <span class="n">parent_labels</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">cluster_feats</span><span class="o">.</span><span class="n">get_parent</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;parent_</span><span class="si">{</span><span class="n">parent</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="n">child_labels</span><span class="p">,</span> <span class="n">child_pts</span> <span class="o">=</span> <span class="n">cluster_feats</span><span class="o">.</span><span class="n">get_child</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;child_</span><span class="si">{</span><span class="n">parent</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 
-            <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">box_locs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                <span class="n">parent_loc</span> <span class="o">=</span> <span class="n">box_locs</span><span class="p">[</span><span class="n">label</span><span class="p">][</span><span class="s1">&#39;points&#39;</span><span class="p">]</span>                    
-                <span class="n">child_cluster_mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">child_labels</span> <span class="o">==</span> <span class="n">label</span><span class="p">)</span>
-                <span class="n">sub_parent</span><span class="p">,</span> <span class="n">sub_parent_pts</span> <span class="o">=</span> <span class="n">cluster_feats</span><span class="o">.</span><span class="n">get_parent</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;parent_</span><span class="si">{</span><span class="n">parent</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-                <span class="n">csp_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">sub_parent_pts</span><span class="p">,</span> <span class="n">child_pts</span><span class="p">[</span><span class="n">child_cluster_mask</span><span class="p">])</span>
-                <span class="n">sub_parent</span> <span class="o">=</span> <span class="n">sub_parent</span><span class="p">[</span><span class="n">csp_mask</span><span class="p">]</span>
-                <span class="n">sub_parents</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">sub_parent</span><span class="p">)</span>
-                <span class="n">sub_parent_locs</span> <span class="o">=</span> <span class="n">parent_boxes</span><span class="p">[</span><span class="n">parent</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
-                <span class="k">for</span> <span class="n">sub</span> <span class="ow">in</span> <span class="n">sub_parents</span><span class="p">:</span>                       
-                    <span class="n">child_loc</span> <span class="o">=</span> <span class="n">sub_parent_locs</span><span class="p">[</span><span class="n">sub</span><span class="p">][</span><span class="s1">&#39;points&#39;</span><span class="p">]</span>
-                    <span class="n">axs</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">parent_loc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">child_loc</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="n">parent_loc</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">child_loc</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="s1">&#39;k-&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">box_locs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="n">parent_loc</span> <span class="o">=</span> <span class="n">box_locs</span><span class="p">[</span><span class="n">label</span><span class="p">][</span><span class="s1">&#39;points&#39;</span><span class="p">]</span>                    
+                    <span class="n">child_cluster_mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">child_labels</span> <span class="o">==</span> <span class="n">label</span><span class="p">)</span>
+                    <span class="n">sub_parent</span><span class="p">,</span> <span class="n">sub_parent_pts</span> <span class="o">=</span> <span class="n">cluster_feats</span><span class="o">.</span><span class="n">get_parent</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;parent_</span><span class="si">{</span><span class="n">parent</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+                    <span class="n">csp_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">sub_parent_pts</span><span class="p">,</span> <span class="n">child_pts</span><span class="p">[</span><span class="n">child_cluster_mask</span><span class="p">])</span>
+                    <span class="n">sub_parent</span> <span class="o">=</span> <span class="n">sub_parent</span><span class="p">[</span><span class="n">csp_mask</span><span class="p">]</span>
+                    <span class="n">sub_parents</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">sub_parent</span><span class="p">)</span>
+                    <span class="n">sub_parent_locs</span> <span class="o">=</span> <span class="n">parent_boxes</span><span class="p">[</span><span class="n">parent</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="k">for</span> <span class="n">sub</span> <span class="ow">in</span> <span class="n">sub_parents</span><span class="p">:</span>                       
+                        <span class="n">child_loc</span> <span class="o">=</span> <span class="n">sub_parent_locs</span><span class="p">[</span><span class="n">sub</span><span class="p">][</span><span class="s1">&#39;points&#39;</span><span class="p">]</span>
+                        <span class="n">axs</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">parent_loc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">child_loc</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="n">parent_loc</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">child_loc</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="s1">&#39;k-&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
@@ -4934,8 +4950,7 @@ DistanceMetric.</p>
 <span class="normal">101</span>
 <span class="normal">102</span>
 <span class="normal">103</span>
-<span class="normal">104</span>
-<span class="normal">105</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+<span class="normal">104</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
              <span class="n">lda</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
              <span class="n">encoder</span><span class="p">:</span> <span class="n">Encoder</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
              <span class="n">metric</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;cosine&#39;</span><span class="p">,</span>
@@ -4944,7 +4959,6 @@ DistanceMetric.</p>
     <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span> <span class="o">=</span> <span class="n">encoder</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">top_n</span> <span class="o">=</span> <span class="n">top_n</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">metric</span> <span class="o">=</span> <span class="n">metric</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">metric_is_max</span> <span class="o">=</span> <span class="n">metric_is_max</span>
 </code></pre></div></td></tr></table></div>
                   </details>
 
@@ -4980,7 +4994,9 @@ numeric embeddings.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src\exhaustive_hdbscan\labelgenerator.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">108</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
 <span class="normal">109</span>
 <span class="normal">110</span>
 <span class="normal">111</span>
@@ -4999,9 +5015,7 @@ numeric embeddings.</p>
 <span class="normal">124</span>
 <span class="normal">125</span>
 <span class="normal">126</span>
-<span class="normal">127</span>
-<span class="normal">128</span>
-<span class="normal">129</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+<span class="normal">127</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Creates the similarity matrix from inputs. Expects text input or</span>
 <span class="sd">    numeric embeddings.</span>
@@ -5041,13 +5055,17 @@ numeric embeddings.</p>
     <div class="doc doc-contents ">
 
         <p>Get the MMR labels.</p>
-<p>y : {array-like} of shape (n_samples,) for text OR (n_samples, n_features) for embeddings
+<p>y : {array-like} of shape (n_sample,) for text OR (n_sample, n_features) for embeddings
     Expects text or numeric embeddings. If text is provided, an Encoder must also be specified.</p>
+<pre><code>It expects exactly one entry.
+</code></pre>
 
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src\exhaustive_hdbscan\labelgenerator.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">132</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">130</span>
+<span class="normal">131</span>
+<span class="normal">132</span>
 <span class="normal">133</span>
 <span class="normal">134</span>
 <span class="normal">135</span>
@@ -5087,13 +5105,18 @@ numeric embeddings.</p>
 <span class="normal">169</span>
 <span class="normal">170</span>
 <span class="normal">171</span>
-<span class="normal">172</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<span class="normal">172</span>
+<span class="normal">173</span>
+<span class="normal">174</span>
+<span class="normal">175</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
     <span class="c1">#TODO transform based only on pairwise distances</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get the MMR labels.</span>
 
-<span class="sd">    y : {array-like} of shape (n_samples,) for text OR (n_samples, n_features) for embeddings</span>
+<span class="sd">    y : {array-like} of shape (n_sample,) for text OR (n_sample, n_features) for embeddings</span>
 <span class="sd">        Expects text or numeric embeddings. If text is provided, an Encoder must also be specified.</span>
+
+<span class="sd">        It expects exactly one entry.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">label_idx</span> <span class="o">=</span> <span class="p">[]</span>
@@ -5108,16 +5131,19 @@ numeric embeddings.</p>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">y_embed</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
         <span class="n">y_embed</span> <span class="o">=</span> <span class="n">y_embed</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
 
+    <span class="k">if</span> <span class="n">y_embed</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Expects only single sample input. Input array must be of shape (1,...).&#39;</span><span class="p">)</span>
+
     <span class="n">target_sim</span> <span class="o">=</span> <span class="n">pairwise_distances</span><span class="p">(</span><span class="n">y_embed</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_embed</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">metric</span><span class="p">)</span>
     <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">target_sim</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
     <span class="n">label_idx</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
     <span class="n">remainder</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_embed</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
     <span class="n">remainder_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">remainder</span><span class="p">,</span> <span class="n">label_idx</span><span class="p">,</span> <span class="n">invert</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">remainder</span> <span class="o">=</span> <span class="n">remainder</span><span class="p">[</span><span class="n">remainder_mask</span><span class="p">]</span>        
+    <span class="n">remainder</span> <span class="o">=</span> <span class="n">remainder</span><span class="p">[</span><span class="n">remainder_mask</span><span class="p">]</span>
 
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">top_n</span><span class="p">):</span>
-        <span class="n">t_sim</span> <span class="o">=</span> <span class="n">target_sim</span><span class="p">[:,</span> <span class="n">remainder</span><span class="p">]</span>
+        <span class="n">t_sim</span> <span class="o">=</span> <span class="n">target_sim</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">remainder</span><span class="p">]</span>
         <span class="n">d_sim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_sim</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ix_</span><span class="p">(</span><span class="n">label_idx</span><span class="p">,</span> <span class="n">remainder</span><span class="p">)]</span>
         <span class="n">d_sim</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">d_sim</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="n">mmr_scores</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lda</span> <span class="o">*</span> <span class="n">t_sim</span><span class="p">)</span> <span class="o">-</span> <span class="p">((</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">lda</span><span class="p">)</span> <span class="o">*</span> <span class="n">d_sim</span><span class="p">)</span>
@@ -5205,10 +5231,7 @@ iteration &gt; cluster.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src\exhaustive_hdbscan\labelgenerator.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">204</span>
-<span class="normal">205</span>
-<span class="normal">206</span>
-<span class="normal">207</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">207</span>
 <span class="normal">208</span>
 <span class="normal">209</span>
 <span class="normal">210</span>
@@ -5253,7 +5276,10 @@ iteration &gt; cluster.</p>
 <span class="normal">249</span>
 <span class="normal">250</span>
 <span class="normal">251</span>
-<span class="normal">252</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cluster_feats</span><span class="p">:</span> <span class="n">ClusterFeatures</span><span class="p">):</span>
+<span class="normal">252</span>
+<span class="normal">253</span>
+<span class="normal">254</span>
+<span class="normal">255</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cluster_feats</span><span class="p">:</span> <span class="n">ClusterFeatures</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    Performs the fit and transforms the input labels as MMR labels and outputs</span>
@@ -5485,10 +5511,7 @@ not execute an MMR ranking.</p>
 
                   <details class="quote">
                     <summary>Source code in <code>src\exhaustive_hdbscan\labelgenerator.py</code></summary>
-                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">311</span>
-<span class="normal">312</span>
-<span class="normal">313</span>
-<span class="normal">314</span>
+                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">314</span>
 <span class="normal">315</span>
 <span class="normal">316</span>
 <span class="normal">317</span>
@@ -5505,7 +5528,10 @@ not execute an MMR ranking.</p>
 <span class="normal">328</span>
 <span class="normal">329</span>
 <span class="normal">330</span>
-<span class="normal">331</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> 
+<span class="normal">331</span>
+<span class="normal">332</span>
+<span class="normal">333</span>
+<span class="normal">334</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> 
              <span class="n">top_n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> 
              <span class="n">min_df</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.20</span><span class="p">,</span> 
              <span class="n">max_df</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.50</span><span class="p">,</span> 
@@ -5613,10 +5639,7 @@ a class. Labels are then generated for each cluster relative to all other cluste
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src\exhaustive_hdbscan\labelgenerator.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">355</span>
-<span class="normal">356</span>
-<span class="normal">357</span>
-<span class="normal">358</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">358</span>
 <span class="normal">359</span>
 <span class="normal">360</span>
 <span class="normal">361</span>
@@ -5653,7 +5676,10 @@ a class. Labels are then generated for each cluster relative to all other cluste
 <span class="normal">392</span>
 <span class="normal">393</span>
 <span class="normal">394</span>
-<span class="normal">395</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+<span class="normal">395</span>
+<span class="normal">396</span>
+<span class="normal">397</span>
+<span class="normal">398</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Fits a corpus of docs by vectorizing ngrams and generating normalized TF-IDF vectors</span>
 <span class="sd">    for each doc.</span>
@@ -5771,10 +5797,7 @@ at all.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src\exhaustive_hdbscan\labelgenerator.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">397</span>
-<span class="normal">398</span>
-<span class="normal">399</span>
-<span class="normal">400</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">400</span>
 <span class="normal">401</span>
 <span class="normal">402</span>
 <span class="normal">403</span>
@@ -5800,7 +5823,10 @@ at all.</p>
 <span class="normal">423</span>
 <span class="normal">424</span>
 <span class="normal">425</span>
-<span class="normal">426</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<span class="normal">426</span>
+<span class="normal">427</span>
+<span class="normal">428</span>
+<span class="normal">429</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Transform unseen data to current Class TF-IDF. It vectorizes the input to the current</span>
 <span class="sd">    fit vocabulary and applies the Class TF-IDF weights to obtain a vector of TF-IDF for the</span>
@@ -5902,10 +5928,7 @@ iteration &gt; cluster.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src\exhaustive_hdbscan\labelgenerator.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">429</span>
-<span class="normal">430</span>
-<span class="normal">431</span>
-<span class="normal">432</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">432</span>
 <span class="normal">433</span>
 <span class="normal">434</span>
 <span class="normal">435</span>
@@ -5944,7 +5967,11 @@ iteration &gt; cluster.</p>
 <span class="normal">468</span>
 <span class="normal">469</span>
 <span class="normal">470</span>
-<span class="normal">471</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cluster_feats</span><span class="p">:</span> <span class="n">ClusterFeatures</span><span class="p">):</span>
+<span class="normal">471</span>
+<span class="normal">472</span>
+<span class="normal">473</span>
+<span class="normal">474</span>
+<span class="normal">475</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cluster_feats</span><span class="p">:</span> <span class="n">ClusterFeatures</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Extracts data from ClusterFeatures, packs them into classes by their cluster and generates</span>
 <span class="sd">    Class TF-IDF labels.</span>
@@ -5962,7 +5989,7 @@ iteration &gt; cluster.</p>
 <span class="sd">        A single level list of top_n class labels for each cluster of each iteration in sequence</span>
 <span class="sd">        iteration &gt; cluster. </span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">class_texts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_preprocess</span><span class="p">(</span><span class="n">cluter_feats</span><span class="p">)</span>
+    <span class="n">class_texts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_preprocess</span><span class="p">(</span><span class="n">cluster_feats</span><span class="p">)</span>
     <span class="n">texts</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">class_texts</span><span class="p">]</span>
 
     <span class="n">cTf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">texts</span><span class="p">)</span>
@@ -5982,7 +6009,8 @@ iteration &gt; cluster.</p>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mmr</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mmr</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">ctf_labels</span><span class="p">:</span>
-            <span class="n">ot_labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mmr</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">l</span><span class="p">)))</span>
+            <span class="n">lb</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">l</span><span class="p">)]</span>
+            <span class="n">ot_labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mmr</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">lb</span><span class="p">)))</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">ot_labels</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">x</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">top_n</span><span class="p">])</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">ctf_labels</span><span class="p">]</span>
 

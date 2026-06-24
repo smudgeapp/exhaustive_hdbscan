@@ -109,6 +109,7 @@ print(ehdb.cluster_feats.parent_names)
 <h2 id="minimal-reducer-and-encoder-implementation">Minimal Reducer and Encoder Implementation</h2>
 <pre><code>from sentence_transformers import SentenceTransformer
 import umap
+from sklearn.preprocessing import normalize
 from exhaustive_hdbscan import Reducer, Encoder
 
 class mEncoder(Encoder):
@@ -182,5 +183,5 @@ class mReducer(Reducer):
 
 <!--
 MkDocs version : 1.6.1
-Build Date UTC : 2026-06-22 23:04:56.612104+00:00
+Build Date UTC : 2026-06-24 03:53:31.805716+00:00
 -->
