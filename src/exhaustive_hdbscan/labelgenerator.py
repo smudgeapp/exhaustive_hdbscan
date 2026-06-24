@@ -102,8 +102,6 @@ class MMR(LabelGeneratorConfig):
         self.encoder = encoder
         self.top_n = top_n
         self.metric = metric
-        self.metric_is_max = metric_is_max
-        
 
     def fit(self, X):
         """
@@ -134,8 +132,9 @@ class MMR(LabelGeneratorConfig):
         """
         Get the MMR labels.
 
-        y : {array-like} of shape (n_samples,) for text OR (n_samples, n_features) for embeddings
+        y : {array-like} of shape (n_sample,) for text OR (n_sample, n_features) for embeddings
             Expects text or numeric embeddings. If text is provided, an Encoder must also be specified.
+            It expects exactly one entry.
         
         """
         label_idx = []
@@ -149,17 +148,20 @@ class MMR(LabelGeneratorConfig):
 
         if len(y_embed.shape) < 2:
             y_embed = y_embed.reshape(1, -1)
-
+        
+        if y_embed.shape[0] > 1:
+            raise ValueError('Expects only single sample input. Input array must be of shape (1,...).')
+        
         target_sim = pairwise_distances(y_embed, self.label_embed, metric=self.metric)
         idx = np.argmin(target_sim, axis=1)
         label_idx.append(idx[0])
         
         remainder = np.arange(0, self.label_embed.shape[0])
         remainder_mask = np.isin(remainder, label_idx, invert=True)
-        remainder = remainder[remainder_mask]        
+        remainder = remainder[remainder_mask]
         
         for i in range(self.top_n):
-            t_sim = target_sim[:, remainder]
+            t_sim = target_sim[0, remainder]
             d_sim = self.label_sim[np.ix_(label_idx, remainder)]
             d_sim = np.min(d_sim, axis=0)
             mmr_scores = (self.lda * t_sim) - ((1 - self.lda) * d_sim)
@@ -444,7 +446,7 @@ class ClassTfidf(LabelGeneratorConfig):
             A single level list of top_n class labels for each cluster of each iteration in sequence
             iteration > cluster. 
         """
-        class_texts = self._preprocess(cluter_feats)
+        class_texts = self._preprocess(cluster_feats)
         texts = [x['text'] for x in class_texts]
         
         cTf = self.fit(texts)
@@ -464,7 +466,8 @@ class ClassTfidf(LabelGeneratorConfig):
         if self.mmr:
             self.mmr.fit(self.features)
             for l in ctf_labels:
-                ot_labels.append(' '.join(self.mmr.transform(l)))
+                lb = [' '.join(l)]
+                ot_labels.append(' '.join(self.mmr.transform(lb)))
         else:
             ot_labels = [' '.join(x[:self.top_n]) for x in ctf_labels]
             

@@ -35,6 +35,7 @@ Here *input_data* is raw feature set.
 
 	from sentence_transformers import SentenceTransformer
 	import umap
+	from sklearn.preprocessing import normalize
 	from exhaustive_hdbscan import Reducer, Encoder
 
 	class mEncoder(Encoder):

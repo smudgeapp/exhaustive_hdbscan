@@ -633,23 +633,31 @@ class EHDBSCAN:
             hori_spacing += 1
             ann_x = 0
 
-        for parent in parent_boxes.keys():
-            if parent < len(parent_boxes.keys()) - 1:
-                box_locs = parent_boxes[parent]
-                parent_labels, _ = cluster_feats.get_parent(name=f'parent_{parent}')
-                child_labels, child_pts = cluster_feats.get_child(name=f'child_{parent}')
-                    
-                for label in box_locs.keys():
-                    parent_loc = box_locs[label]['points']                    
-                    child_cluster_mask = (child_labels == label)
-                    sub_parent, sub_parent_pts = cluster_feats.get_parent(name=f'parent_{parent+1}')
-                    csp_mask = np.isin(sub_parent_pts, child_pts[child_cluster_mask])
-                    sub_parent = sub_parent[csp_mask]
-                    sub_parents = np.unique(sub_parent)
-                    sub_parent_locs = parent_boxes[parent+1]
-                    for sub in sub_parents:                       
-                        child_loc = sub_parent_locs[sub]['points']
-                        axs.plot([parent_loc[0], child_loc[0]], [parent_loc[1], child_loc[1]], 'k-', lw=1)
+        if len(parent_boxes.keys()) == 1:
+            box_locs = parent_boxes[0]
+            k = list(box_locs.keys())[-1]
+            loc = box_locs[k]['points']
+            xlim = abs(loc[0])
+            axs.set_ylim(-1, 1)
+            axs.set_xlim(-xlim, xlim)
+        else:
+            for parent in parent_boxes.keys():
+                if parent < len(parent_boxes.keys()) - 1:
+                    box_locs = parent_boxes[parent]
+                    parent_labels, _ = cluster_feats.get_parent(name=f'parent_{parent}')
+                    child_labels, child_pts = cluster_feats.get_child(name=f'child_{parent}')
+                        
+                    for label in box_locs.keys():
+                        parent_loc = box_locs[label]['points']                    
+                        child_cluster_mask = (child_labels == label)
+                        sub_parent, sub_parent_pts = cluster_feats.get_parent(name=f'parent_{parent+1}')
+                        csp_mask = np.isin(sub_parent_pts, child_pts[child_cluster_mask])
+                        sub_parent = sub_parent[csp_mask]
+                        sub_parents = np.unique(sub_parent)
+                        sub_parent_locs = parent_boxes[parent+1]
+                        for sub in sub_parents:                       
+                            child_loc = sub_parent_locs[sub]['points']
+                            axs.plot([parent_loc[0], child_loc[0]], [parent_loc[1], child_loc[1]], 'k-', lw=1)
         plt.axis('off')
         plt.show()
         
